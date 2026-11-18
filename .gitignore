@@ -1,0 +1,66 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# marimo
+__marimo__/
+
+# Secrets and local config
+.env
+.claude/settings.local.json
+
+# Notebooks and logs
+.ipynb_checkpoints/
+*.log
+
+# LaTeX build files
+*.aux
+*.out
+*.synctex.gz
+*.toc
+
+# Reference material (kept local, not versioned)
+Textbooks/
+Courses/
+Resources/
+
+# Secrets and local config
+.env
+.claude/settings.local.json
+
+# Notebooks and logs
+.ipynb_checkpoints/
+*.log
+
+# LaTeX build files
+*.aux
+*.out
+*.synctex.gz
+*.toc
+
+# More LaTeX build files
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.vrb
+
+# Compiled paper PDFs (regenerate with latexmk)
+paper/**/*.pdf
+
+# manim output (rendered videos, images, slides) and cache
+.manim_media/
+
+# Data downloads (raw snapshots and derived files; never committed)
+data/

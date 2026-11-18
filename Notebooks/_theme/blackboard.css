@@ -1,0 +1,82 @@
+/* Blackboard theme for marimo notebooks (browser app).
+   Palette mirrors src/mathsandmeander/common/theme.py and .vscode/settings.json;
+   tests/test_theme.py checks that they agree. */
+
+:root,
+.marimo,
+.light,
+.dark {
+  color-scheme: dark;
+  --background: #202021;
+  --foreground: #f2f2f2;
+  --muted: #34373a;
+  --muted-foreground: #f2f2f2;
+  --popover: #34373a;
+  --popover-foreground: #f2f2f2;
+  --card: #34373a;
+  --card-foreground: #f2f2f2;
+  --border: #4a4e52;
+  --input: #4a4e52;
+  --primary: #7cb7e8;
+  --primary-foreground: #202021;
+  --secondary: #34373a;
+  --secondary-foreground: #f2f2f2;
+  --accent: #34373a;
+  --accent-foreground: #f2f2f2;
+  --link: #f2f2f2;
+  --link-visited: #f2f2f2;
+  --cm-background: #34373a;
+
+  /* Same fonts as the VS Code markdown preview (Windows defaults) */
+  --marimo-text-font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    "Ubuntu", "Droid Sans", sans-serif;
+  --marimo-heading-font: var(--marimo-text-font);
+  --marimo-monospace-font: Consolas, "Courier New", monospace;
+  --text-font: var(--marimo-text-font);
+  --heading-font: var(--marimo-heading-font);
+  --monospace-font: var(--marimo-monospace-font);
+}
+
+body,
+#root {
+  background-color: #202021;
+  color: #f2f2f2;
+  font-family: var(--marimo-text-font);
+}
+
+/* Markdown output */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown strong,
+.markdown a,
+.markdown li,
+.markdown p {
+  color: #f2f2f2;
+}
+
+.markdown a {
+  text-decoration: underline;
+}
+
+.markdown code {
+  background-color: #34373a;
+  color: #f2f2f2;
+}
+
+.markdown th,
+.markdown td {
+  border-color: #4a4e52;
+}
+
+/* Matplotlib/PNG output already carries the blackboard background */
+.output-area img {
+  background-color: #202021;
+}
+
+/* Numbered captions below figures and tables (mathsandmeander.common.xref) */
+.xref-caption {
+  font-size: 0.9em;
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,72 @@
+[project]
+name = "mathsandmeander"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Dobovu18", email = "Dobovu18@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "alpaca-py>=0.44.0",
+    "altair>=6.3.0",
+    "anywidget>=0.11.0",
+    "arch>=8.0.0",
+    "arcticdb>=6.28.0",
+    "binance>=0.3.149",
+    "binance-connector>=3.13.0",
+    "cvxpy>=1.9.3",
+    "faker>=40.43.0",
+    "fncbook>=0.1.5",
+    "lse-data>=0.14.0",
+    "manim>=0.22.0",
+    "manim-slides[pyside6]>=5.7.0",
+    "marimo>=0.25.1",
+    "marimo-lens>=0.2.3",
+    "matplotlib>=3.11.2",
+    "moterm>=0.1.0",
+    "numpy>=2.5.4",
+    "pandas>=2.3.3",
+    "panel>=1.9.4",
+    "plotly>=7.1.0",
+    "polars>=2.0.0",
+    "pybtex>=0.26.1",
+    "pyfolio-reloaded>=0.9.9",
+    "python-binance>=1.0.37",
+    "quantlib>=1.44",
+    "quantstats>=0.0.86",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.18.1",
+    "statsmodels>=0.15.0",
+    "sympy>=1.14.0",
+    "tensorflow>=2.21.0",
+    "torch>=2.14.1",
+    "traitlets>=5.16.1",
+]
+
+[project.scripts]
+mathsandmeander = "mathsandmeander:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.17.1",
+]
+
+[tool.pytest.ini_options]
+# Only the project's tests: Courses/ (gitignored) holds third-party repos with their own test suites
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# marimo notebooks: cells end in `return` and show results as a bare final expression
+"Notebooks/**/*.py" = ["B018", "PLR1711"]
+
+[tool.marimo.display]
+theme = "dark"
+
+[tool.marimo.runtime]
+auto_reload = "autorun"

@@ -1,0 +1,68 @@
+{
+    "workbench.colorCustomizations": {
+        "foreground": "#f2f2f2",
+        "descriptionForeground": "#b4b8bc",
+        "focusBorder": "#7cb7e8",
+        "editor.background": "#202021",
+        "editor.foreground": "#f2f2f2",
+        "editorLineNumber.foreground": "#5a5e62",
+        "editorLineNumber.activeForeground": "#f2f2f2",
+        "editor.selectionBackground": "#4a4e52",
+        "editor.lineHighlightBackground": "#34373a",
+        "editorCursor.foreground": "#f4e285",
+        "editorGroupHeader.tabsBackground": "#202021",
+        "tab.activeBackground": "#202021",
+        "tab.inactiveBackground": "#34373a",
+        "tab.activeForeground": "#f2f2f2",
+        "tab.inactiveForeground": "#b4b8bc",
+        "sideBar.background": "#34373a",
+        "sideBar.foreground": "#f2f2f2",
+        "activityBar.background": "#34373a",
+        "activityBar.foreground": "#f2f2f2",
+        "panel.background": "#202021",
+        "panel.border": "#4a4e52",
+        "titleBar.activeBackground": "#34373a",
+        "titleBar.activeForeground": "#f2f2f2",
+        "statusBar.background": "#34373a",
+        "statusBar.foreground": "#f2f2f2",
+        "terminal.background": "#202021",
+        "terminal.foreground": "#f2f2f2",
+        "input.background": "#34373a",
+        "input.foreground": "#f2f2f2",
+        "notebook.editorBackground": "#202021",
+        "notebook.cellEditorBackground": "#34373a",
+        "notebook.cellBorderColor": "#4a4e52",
+        "notebook.focusedCellBorder": "#7cb7e8",
+        "notebook.selectedCellBorder": "#7cb7e8",
+        "notebook.outputContainerBackgroundColor": "#202021"
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            { "scope": ["comment"], "settings": { "foreground": "#b4b8bc", "fontStyle": "italic" } },
+            { "scope": ["keyword", "storage"], "settings": { "foreground": "#f4a6c6" } },
+            { "scope": ["string"], "settings": { "foreground": "#a5d6a7" } },
+            { "scope": ["constant.numeric"], "settings": { "foreground": "#f8b878" } },
+            { "scope": ["entity.name.function", "support.function"], "settings": { "foreground": "#f4e285" } },
+            { "scope": ["entity.name.class", "support.class"], "settings": { "foreground": "#7cb7e8" } }
+        ]
+    },
+    "workbench.editorAssociations": {
+        "*.py": "marimo-notebook",
+        "*.pdf": "latex-workshop-pdf-hook"
+    },
+    "latex-workshop.view.pdf.invertMode.enabled": "never",
+    "latex-workshop.view.pdf.color.dark.pageColorsBackground": "#202021",
+    "latex-workshop.view.pdf.color.dark.pageColorsForeground": "#f2f2f2",
+    "latex-workshop.view.pdf.color.dark.backgroundColor": "#34373a",
+    "latex-workshop.view.pdf.color.dark.pageBorderColor": "#4a4e52",
+    "permissions" : {
+        "deny": [
+            "Read(Textbooks/**)",
+            "Edit(Textbooks/**)",
+            "Write(Textbooks/**)",
+            "Read(Resources/**)",
+            "Edit(Resources/**)",
+            "Write(Resources/**)"
+        ]
+    }
+}
