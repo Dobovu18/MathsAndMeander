@@ -1956,6 +1956,89 @@ def _():
     return
 
 
+@app.cell
+def _():
+    # Added by Claude: controls for the put-call parity figure below (Sections 2.2-2.3).
+    # The rate starts at 0.01 because Section 1.8 assumes r > 0.
+    parity_strike = mo.ui.slider(start=10, stop=150, value=100, step=1)
+    parity_time = mo.ui.slider(start=0, stop=10, value=2, step=0.25)
+    parity_rate = mo.ui.slider(start=0.01, stop=0.2, value=0.05, step=0.01)
+    parity_dividend = mo.ui.slider(start=0, stop=30, value=0, step=1)
+    return parity_dividend, parity_rate, parity_strike, parity_time
+
+
+@app.cell
+def _(p_asset, parity_dividend, parity_rate, parity_strike, parity_time):
+    # Added by Claude: put-call parity (2.2.1) and the American relation (2.2.2), with their
+    # dividend-adjusted forms from Section 2.3. Only C - P is plotted: parity fixes it without
+    # a pricing model, whereas C and P on their own need one (Part III).
+    _K, _tau, _r, _D = (
+        parity_strike.value,
+        parity_time.value,
+        parity_rate.value,
+        parity_dividend.value,
+    )
+    _Z = np.exp(-_r * _tau)
+    _european = p_asset - _D - _K * _Z
+    _american_low = p_asset - _D - _K
+    _american_high = p_asset - _K * _Z
+
+    _fig, _ax = plt.subplots(figsize=(8, 5))
+    _ax.axhline(0, color=theme.FOREGROUND, lw=1)
+    _ax.axvline(_K, color=theme.PINK, lw=1, linestyle=":", label=r"Strike Price $K$")
+    _ax.fill_between(
+        p_asset,
+        _american_low,
+        _american_high,
+        color=theme.GREEN,
+        alpha=0.3,
+        lw=0,
+        label=r"American: $S - D - K \le C_{A} - P_{A} \le S - KZ$",
+    )
+    _ax.plot(
+        p_asset,
+        _european,
+        color=theme.YELLOW,
+        lw=2,
+        label=r"European: $C_{E} - P_{E} = S - D - KZ$",
+    )
+    _ax.plot(
+        p_asset,
+        p_asset - _K,
+        color=theme.MUTED,
+        lw=1,
+        linestyle="--",
+        label=r"Payoff difference at expiry: $S(T) - K$",
+    )
+    _ax.set_xlabel(r"Underlying Asset Price in \$, $S$")
+    _ax.set_ylabel(r"Call Price minus Put Price in \$")
+    _ax.set_title(r"Put-Call Parity: $C - P$ vs Asset Price")
+    _ax.legend(loc="upper left")
+
+    mo.vstack(
+        [
+            mo.md(rf"Strike Price: $K = \$ {_K}$"),
+            parity_strike,
+            mo.md(rf"Time Until Expiry: $T - t = {_tau}$ years"),
+            parity_time,
+            mo.md(rf"Interest Rate: $r = {_r:.2f}$ ({_r * 100:.0f}% per annum)"),
+            parity_rate,
+            mo.md(rf"Present Value of Dividends: $D = \$ {_D}$"),
+            parity_dividend,
+            mo.md(
+                rf"Discount factor $Z = e^{{-r(T-t)}} = {_Z:.4f}$; width of the American band $K(1-Z) + D = {_K * (1 - _Z) + _D:.2f}$."
+            ),
+            xref.figure(
+                __file__,
+                "parity-band",
+                _fig,
+                r"The difference between the prices of a call and a put with the same strike and expiry, against the asset price $S$. For European options it is the line given by put-call parity [(2.2.1)](#eq-put-call-parity); for American options it lies in the band given by [(2.2.2)](#eq-us-put-call-relation). Dividends ($D > 0$) shift both as in [Section 2.3](#sec-dividends). The band has width $K(1-Z) + D$; with $D = 0$ the European line is its upper edge, and the band closes as $T - t \to 0$.",
+            ),
+        ]
+    )
+    return
+
+
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
@@ -1985,6 +2068,147 @@ def _():
 
     ***Note:*** a stock going ex-dividend means that the company's dividend allocations have been specified, so buyers after a specified date do not receive the declared dividends. The ex-dividend date is the date on which the stock begins trading without the value of the next dividend [[Investopedia](#ref-INV_exdividend)].
     """)
+    return
+
+
+@app.cell
+def _():
+    # Added by Claude: controls for the early-exercise figure below (Section 2.4).
+    # The rate starts at 0.01 because Section 1.8 assumes r > 0.
+    exercise_strike = mo.ui.slider(start=10, stop=150, value=100, step=1)
+    exercise_time = mo.ui.slider(start=0, stop=10, value=2, step=0.25)
+    exercise_rate = mo.ui.slider(start=0.01, stop=0.3, value=0.1, step=0.01)
+    exercise_dividend = mo.ui.slider(start=0, stop=50, value=0, step=1)
+    return exercise_dividend, exercise_rate, exercise_strike, exercise_time
+
+
+@app.cell
+def _(exercise_dividend, exercise_rate, exercise_strike, exercise_time, p_asset):
+    # Added by Claude: the no-arbitrage regions (2.1.1)-(2.1.5) for call and put prices,
+    # compared with intrinsic value. Only proven bounds are drawn, not prices: the price
+    # curves and the optimal exercise boundary need a pricing model (Part III).
+    _K, _tau, _r, _D = (
+        exercise_strike.value,
+        exercise_time.value,
+        exercise_rate.value,
+        exercise_dividend.value,
+    )
+    _Z = np.exp(-_r * _tau)
+    _gap = _K * (
+        1 - _Z
+    )  # K(1 - Z): the call's margin over intrinsic value, and the put threshold
+    _call_intrinsic = np.maximum(p_asset - _K, 0)
+    _put_intrinsic = np.maximum(_K - p_asset, 0)
+    # max(S - D - KZ, 0) <= C_E <= C_A <= S, with the dividend-adjusted lower bound from Section 2.3
+    _call_low = np.maximum(p_asset - _D - _K * _Z, 0)
+
+    _fig, (_call_ax, _put_ax) = plt.subplots(1, 2, figsize=(12, 5))
+    for _ax in (_call_ax, _put_ax):
+        _ax.axhline(0, color=theme.FOREGROUND, lw=1)
+        _ax.axvline(
+            _K, color=theme.PINK, lw=1, linestyle=":", label=r"Strike Price $K$"
+        )
+        _ax.set_xlabel(r"Underlying Asset Price in \$, $S$")
+        _ax.set_ylabel(r"Option Price in \$")
+
+    _call_ax.fill_between(
+        p_asset,
+        _call_low,
+        p_asset,
+        color=theme.BLUE,
+        alpha=0.3,
+        lw=0,
+        label=r"$\max(S - D - KZ, 0) \le C_{E} \le C_{A} \le S$",
+    )
+    _call_ax.plot(
+        p_asset,
+        _call_intrinsic,
+        color=theme.YELLOW,
+        lw=2,
+        label=r"Intrinsic value $\max(S - K, 0)$",
+    )
+    # S - D - KZ < S - K exactly when D > K(1 - Z): only then can the lower bound fall below intrinsic value
+    if _D > _gap:
+        _call_ax.fill_between(
+            p_asset,
+            _call_low,
+            _call_intrinsic,
+            where=_call_intrinsic > _call_low,
+            color=theme.PINK,
+            alpha=0.5,
+            lw=0,
+            label=r"Lower bound below intrinsic value: early exercise not ruled out",
+        )
+    _call_ax.set_title(r"Call Options")
+    _call_ax.legend(loc="upper left")
+
+    _put_ax.fill_between(
+        p_asset,
+        _put_intrinsic,
+        _K,
+        color=theme.GREEN,
+        alpha=0.25,
+        lw=0,
+        label=r"$\max(K - S, 0) \le P_{A} \le K$",
+    )
+    _put_ax.fill_between(
+        p_asset,
+        np.maximum(_K * _Z - p_asset, 0),
+        _K * _Z,
+        color=theme.BLUE,
+        alpha=0.3,
+        lw=0,
+        label=r"$\max(KZ - S, 0) \le P_{E} \le KZ$",
+    )
+    _put_ax.plot(
+        p_asset,
+        _put_intrinsic,
+        color=theme.YELLOW,
+        lw=2,
+        label=r"Intrinsic value $\max(K - S, 0)$",
+    )
+    # For S < K(1 - Z): P_E <= KZ < K - S <= P_A, by (2.1.3) and (2.1.5)
+    if _gap > 0:
+        _put_ax.axvspan(
+            0,
+            _gap,
+            color=theme.PINK,
+            alpha=0.25,
+            lw=0,
+            label=r"$S < K(1-Z)$: $P_{E} \le KZ < K - S \le P_{A}$",
+        )
+    _put_ax.set_ylim(-0.05 * _K, 1.8 * _K)  # headroom above K for the legend
+    _put_ax.set_title(r"Put Options")
+    _put_ax.legend(loc="upper right")
+    _fig.tight_layout()
+
+    _call_status = (
+        rf"$D = {_D} > K(1-Z)$, so the call's lower bound falls below intrinsic value for $S > K$ (pink)."
+        if _D > _gap
+        else rf"$D = {_D} \le K(1-Z)$, so the call's lower bound stays at or above intrinsic value."
+    )
+    mo.vstack(
+        [
+            mo.md(rf"Strike Price: $K = \$ {_K}$"),
+            exercise_strike,
+            mo.md(rf"Time Until Expiry: $T - t = {_tau}$ years"),
+            exercise_time,
+            mo.md(rf"Interest Rate: $r = {_r:.2f}$ ({_r * 100:.0f}% per annum)"),
+            exercise_rate,
+            mo.md(rf"Present Value of Dividends (call only): $D = \$ {_D}$"),
+            exercise_dividend,
+            mo.md(
+                rf"Discount factor $Z = e^{{-r(T-t)}} = {_Z:.4f}$ and $K(1-Z) = {_gap:.2f}$. "
+                + _call_status
+            ),
+            xref.figure(
+                __file__,
+                "early-exercise-bounds",
+                _fig,
+                r"No-arbitrage regions for option prices against the asset price $S$, from [(2.1.1)](#eq-bounds-us-vs-eu) to [(2.1.5)](#eq-bounds-us-put), compared with intrinsic value. Left: with no dividends, for $S > K$ the call region lies at least $K(1-Z)$ above intrinsic value, so exercising early gives up value [(2.4.1)](#eq-early-exercise-call); with dividends $D > K(1-Z)$ (lower bound from [Section 2.3](#sec-dividends)) the lower bound falls below intrinsic value, so early exercise is no longer ruled out (pink). Right: for $S < K(1-Z)$ (pink), the European put must be worth less than immediate exercise, so the right to exercise early has strictly positive value. The regions are bounds, not prices.",
+            ),
+        ]
+    )
     return
 
 

@@ -6,8 +6,6 @@ app = marimo.App(css_file="../../_theme/blackboard.css")
 with app.setup:
     # Import libraries and set up the notebook in the initialisation
 
-    # The "noqa: F401" marks imports that are not used yet; remove each one once the import is used.
-
     # Imports for notebook set-up, plots and themes:
     import marimo as mo
     import matplotlib.pyplot as plt
